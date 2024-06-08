@@ -14,7 +14,7 @@ public class Main {
         frame.setSize(400, 200);
 
         // Crear combobox con nombres de programas
-        String[] programas = {"C:\\Users\\Salva\\Documents\\Arduino\\sketch_may25a\\sketch_may25a.ino.bin"};
+        String[] programas = {"C:\\Users\\Salva\\Desktop\\Repositorios\\Arduino-Basics\\TFG\\Binaries\\1_Blink.bin"};
         JComboBox<String> comboBox = new JComboBox<>(programas);
 
         // Crear botón para flashear
@@ -42,7 +42,8 @@ public class Main {
     private static void flashESP32(String program) {
         try {
             // Ruta al archivo .bin y puerto del ESP32
-            String command = "esptool --port COM3 write_flash 0x1000 " + program;
+            String command = "esptool --chip esp32 --port COM3 write_flash 0x1000 " + program;
+
 
             // Ejecutar el comando
             Process process = Runtime.getRuntime().exec(command);
