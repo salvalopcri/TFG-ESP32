@@ -43,6 +43,17 @@ public class Main {
         try {
             // Ruta al archivo .bin y puerto del ESP32
             String command = "esptool --chip esp32 --port COM3 write_flash 0x1000 " + program;
+            /**
+             * Vale esto hay que comprobarlo mas a fondo pero desde espressif, este es el comando que me ha permitido flashear el programaa en el ESP32 WROOM.
+             * 
+             * esptool --chip esp32 -p COM5 -b 460800 --before=default_reset --after=hard_reset write_flash 
+             * --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 bootloader.bin 0x10000 app-template.bin 0x8000 partition-table.bin
+             * 
+             * Al parecer son necesarios los ficheros bootloader.bin, app-template.bin y partition-table.bin.
+             * Todos ellos se pueden encontrar en la ruta C:\Espressif\frameworks\esp-idf-v5.1.2\workspace\Pruebas\build
+             * 
+             * Los he metido , almenos los del primer ejemplo, en la carpeta resources
+             */
 
 
             // Ejecutar el comando
