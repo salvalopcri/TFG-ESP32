@@ -53,6 +53,9 @@ public class Main {
              * Todos ellos se pueden encontrar en la ruta C:\Espressif\frameworks\esp-idf-v5.1.2\workspace\Pruebas\build
              * 
              * Los he metido , almenos los del primer ejemplo, en la carpeta resources
+             * 
+             * Seria interesante tener alomejor 2 ventanas y que cada una sea para un esp32 (wroom o wrover) y con un COM conocido, de manera que al pulsar al boton, el COM se 
+             * introduzca en función de que botón se ha pulsado, pero no Hard codeado.
              */
 
 
