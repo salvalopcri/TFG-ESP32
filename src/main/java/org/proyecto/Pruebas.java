@@ -1,110 +1,108 @@
 package org.proyecto;
+import org.proyecto.HelpWindow;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Pruebas extends JFrame {
-    private JTextField filePathField;
-    private JTextField serialPortField;
-    private JTextArea logArea;
+    private JComboBox<String> programList;
+    private JTextArea outputArea;
+    private JButton flashButton;
+    private JButton helpButton;
 
     public Pruebas() {
-        setTitle("ESP32 Flasher");
-        setSize(600, 400);
+        // Configurar la ventana
+        setTitle("Flashear ESP32");
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        createMenu();  // Añadir el menú
 
-        JLabel fileLabel = new JLabel("Binary File:");
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(fileLabel, gbc);
+        // Crear y añadir componentes
+        JLabel label = new JLabel("Selecciona el programa:");
+        label.setBounds(10, 20, 200, 25);
+        add(label);
 
-        filePathField = new JTextField(20);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panel.add(filePathField, gbc);
+        String[] programas = {"web_server", "led_blink", "sensor_data", "wifi_scan"};
+        programList = new JComboBox<>(programas);
+        programList.setBounds(220, 20, 200, 25);
+        add(programList);
 
-        JButton browseButton = new JButton("Browse...");
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panel.add(browseButton, gbc);
-        browseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    filePathField.setText(fileChooser.getSelectedFile().getAbsolutePath());
-                }
-            }
-        });
+        flashButton = new JButton("Flashear");
+        flashButton.setBounds(10, 60, 150, 25);
+        add(flashButton);
 
-        JLabel portLabel = new JLabel("Serial Port:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        panel.add(portLabel, gbc);
+        helpButton = new JButton("Ayuda");
+        helpButton.setBounds(170, 60, 150, 25);
+        add(helpButton);
 
-        serialPortField = new JTextField(20);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        panel.add(serialPortField, gbc);
+        outputArea = new JTextArea();
+        outputArea.setBounds(10, 100, 460, 250);
+        outputArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(outputArea);
+        scrollPane.setBounds(10, 100, 460, 250);
+        add(scrollPane);
 
-        JButton flashButton = new JButton("Flash");
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        panel.add(flashButton, gbc);
+        // Añadir el listener al botón de flasheo
         flashButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                flashESP32();
+                String selectedProgram = (String) programList.getSelectedItem();
+                flashearPrograma(selectedProgram);
             }
         });
 
-        logArea = new JTextArea(10, 40);
-        logArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(logArea);
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel.add(scrollPane, gbc);
+        // Añadir el listener al botón de ayuda
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new HelpWindow();
+            }
+        });
 
-        add(panel);
+        // Hacer visible la ventana
+        setVisible(true);
     }
 
-    private void flashESP32() {
-        String filePath = filePathField.getText();
-        String serialPort = serialPortField.getText();
-        logArea.append("Flashing " + filePath + " to " + serialPort + "\n");
-
-        // Aquí es donde se llamará a esptool.py
+    private void flashearPrograma(String programa) {
+        String command = "esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 115200 write_flash -z 0x1000 ./binarios/" + programa + ".bin";
+        outputArea.setText(""); // Limpiar el área de salida
         try {
-            ProcessBuilder builder = new ProcessBuilder(
-                    "python", "-m", "esptool", "--chip", "esp32", "--port", serialPort, "write_flash", "0x1000", filePath
-            );
-            builder.redirectErrorStream(true);
-            Process process = builder.start();
-            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                logArea.append(line + "\n");
+                outputArea.append(line + "\n");
             }
-            process.waitFor();
-        } catch (Exception e) {
-            logArea.append("Error: " + e.getMessage() + "\n");
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                JOptionPane.showMessageDialog(this, "Programa " + programa + " flasheado correctamente.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al flashear el programa " + programa + ".", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException | InterruptedException ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu helpMenu = new JMenu("Ayuda");
+        JMenuItem aboutItem = new JMenuItem("Acerca de");
+        aboutItem.addActionListener(new ActionListener() {
             @Override
-            public void run() {
-                new Pruebas().setVisible(true);
+            public void actionPerformed(ActionEvent e) {
+                new HelpWindow();
             }
         });
+        helpMenu.add(aboutItem);
+        menuBar.add(helpMenu);
+        setJMenuBar(menuBar);
     }
 }
