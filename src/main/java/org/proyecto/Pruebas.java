@@ -91,8 +91,10 @@ public class Pruebas extends JFrame {
     private void flashearPrograma(String programa) {
         String rutaFinal = RUTA + programList.getSelectedItem()+"\\";
         String command = "esptool --chip esp32 -p COM4 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 "+rutaFinal+"bootloader.bin 0x10000 "+rutaFinal+"app-template.bin 0x8000 "+rutaFinal+"partition-table.bin";
-        outputArea.setText(""); // Limpiar el área de salida
+        outputArea.setText("Cargando...\n\n"); // Limpiar el área de salida
+        
         try {
+            Thread.sleep(200);
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
