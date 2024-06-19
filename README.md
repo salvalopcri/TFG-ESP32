@@ -24,7 +24,32 @@ Para la utilización de este código será necesario disponer de:
 
 ## Estructura de directorios
 
-(PENDIENTE DE ORDENAR)
+```
+
+TFG-ESP32/
+├── .idea                              // Componentes del IDE     
+├── src/main                           // Núcleo del proyecto.
+│   ├── java/org/proyecto              // Aqui encontramos el código fuente de la aplicación java.
+|       ├── Main.java                  //Programa principal, solo llama Ventana_Final.java
+|       └── Vista
+|           ├── HelpWindow.java         // Ventana de ayuda.
+|           ├── MencionesWindow.java    // Ventana de menciones especiales.
+|           └── VentanaFinal.java       // Ventana principal y lógica de funcionamiento.
+│   ├── resources                       // Aqui encontramos los archivos compilados de cada programa.
+|       ├── Access_Point
+|       ├── Blink_Fade
+|       ├── Bluethoot_Chat
+|       └── Web_Server
+│   ├── Docs                       // Toda documentación refente al proyecto.
+|       ├── Presentación.pxpt
+|       ├── Documentación_presentación.pdf
+|       └── Documentación Técnica.pdf
+│     
+├── pom.xml    // Dependencias del proyecto.
+├── .gitignore
+└── README.md
+
+```
 
 ## Acerca de
 
