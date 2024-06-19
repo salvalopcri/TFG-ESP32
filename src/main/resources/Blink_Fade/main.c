@@ -36,13 +36,14 @@ void app_main() {
 void init_touch_pad() {
     touch_pad_init();
 
-    // Configura los pines táctiles
+    //Configuración de los  los pines táctiles. (Esto varía en función del modelo del ESP32).
+    //Estos sirven para el ESP32 Wroover si no me equivoco.
     touch_pad_config(TOUCH_PAD_LEFT_PIN, 0);
     touch_pad_config(TOUCH_PAD_RIGHT_PIN, 0);
 }
 
 void init_ledc() {
-    // Configura el canal LEDC para el pin 2 (LED)
+    //Configuración del canal LEDC para el pin 2 (LED)
     ledc_timer_config_t ledc_timer = {
         .duty_resolution = LEDC_TIMER_8_BIT,
         .freq_hz = 5000,
@@ -66,11 +67,12 @@ void init_ledc() {
 void comprobarPines() {
     uint16_t toqueIzq = 0, toqueDer = 0;
 
-    // Leer los valores de los pines táctiles
+    //Leer los valores de los pines táctiles. Esto es corriente eléctrica. El valor nulo es
+    //150 para el izquierdo y 120 para el derecho
     touch_pad_read(TOUCH_PAD_LEFT_PIN, &toqueIzq);
     touch_pad_read(TOUCH_PAD_RIGHT_PIN, &toqueDer);
 
-    // Determinar el estado de los pines táctiles
+    //Si baja de esos valores, significa que se están tocando.
     if (toqueIzq < 120 && toqueDer > 100) {
         pinIzq = true;
         pinDer = false;

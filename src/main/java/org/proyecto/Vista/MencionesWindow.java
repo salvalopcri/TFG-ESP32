@@ -6,14 +6,14 @@ import java.awt.*;
 public class MencionesWindow extends JFrame {
 
     public MencionesWindow() {
-        // Configurar la ventana
+
         setTitle("Menciones");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
 
-        // Añadir contenido de menciones
+
         JTextArea textArea = new JTextArea();
         textArea.setText("Menciones honoríficas:\n\n" +
                 "Empresa formadora: IKOSTECH S.L.\n\n" +
@@ -26,6 +26,6 @@ public class MencionesWindow extends JFrame {
         textArea.setMargin(new Insets(10, 10, 10, 10));
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        // Hacer visible la ventana
+
         setVisible(true);
     }}

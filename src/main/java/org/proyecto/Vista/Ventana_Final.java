@@ -1,5 +1,4 @@
-package org.proyecto;
-import org.proyecto.Vista.*;
+package org.proyecto.Vista;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Pruebas extends JFrame {
+public class Ventana_Final extends JFrame {
     private JComboBox<String> programList;
     private JTextArea outputArea;
     private JButton flashButton;
@@ -16,22 +15,22 @@ public class Pruebas extends JFrame {
     private JComboBox<String> placasList;
     private static final String RUTA = "C:\\Users\\Salva\\IdeaProjects\\ESP32_Flasher\\src\\main\\resources\\";
 
-    public Pruebas() {
-        // Configurar la ventana
+    public Ventana_Final() {
+
         setTitle("ESP32 Flasher");
         setSize(700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
 
-        createMenu();  // Añadir el menú
+        createMenu();
 
-        // Crear y añadir componentes
+
         JLabel labelPlaca = new JLabel("Selecciona el dispositivo:");
         labelPlaca.setBounds(10, 20, 200, 25);
         add(labelPlaca);
 
-        String[] placas = {"esp32", "esp32-Wroover", "esp32-Wroom", "DWM3001CDK"};
+        String[] placas = {"esp32", "esp32-Wroover (Proximamente)", "esp32-Wroom (Proximamente)", "DWM3001CDK (Proximamente)"};
         placasList = new JComboBox<>(placas);
         placasList.setBounds(220, 20, 200, 25);
         add(placasList);
@@ -40,7 +39,7 @@ public class Pruebas extends JFrame {
         label.setBounds(10, 50, 200, 25);
         add(label);
 
-        String[] programas = {"Web_Server", "Blink_Fade", "Sensor_Data", "WiFi_Scan", "Bluethoot_Chat"};
+        String[] programas = {"Web_Server", "Blink_Fade", "Bluethoot_Chat", "Access_Point", "Sensor_Data (Proximamente)", "WiFi_Scan (Proximamente)"};
         programList = new JComboBox<>(programas);
         programList.setBounds(220, 50, 200, 25);
         add(programList);
@@ -60,7 +59,7 @@ public class Pruebas extends JFrame {
         scrollPane.setBounds(10, 150, 660, 250);
         add(scrollPane);
 
-        // Añadir el listener al botón de flasheo
+
         flashButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,12 +68,26 @@ public class Pruebas extends JFrame {
             }
         });
 
-        // Añadir el listener al botón de ayuda
+
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new HelpWindow();
+                String helpMessage = "Pasos para utilizar el programa:\n" +
+                        "1. Conectar el ESP32 a tu ordenador.\n" +
+                        "2. Seleccionar el modelo correspondiente.\n" +
+                        "3. Seleccionar el programa a flashear.\n" +
+                        "4. Pulsar Flashear.\n\n" +
+                        "Programas:\n" +
+                        "1- Blink_Fade: El ESP32 enciende la luz de manera constante o intermitente en función de qué pines se toquen.\n" +
+                        "2- Web_Server: Crear un servidor web en tu red el cual permite controlar las luces del dispositivo.\n" +
+                        "3- Bluetooth_Chat: Crear un canal de comunicación bluetooth entre el ESP32 y cualquier otro dispositivo.\n" +
+                        "4- Access_Point: Crear un punto de acceso configurable de manera dinámica.\n" +
+                        "5- WiFi_Scan: Escanea las redes Wi-Fi cercanas.\n" +
+                        "\nToda esa información se encuentra mejor detallada en la documentación técnica del repositorio";
+
+                JOptionPane.showMessageDialog(null, helpMessage, "Ayuda", JOptionPane.INFORMATION_MESSAGE);
             }
+
         });
 
         programList.addActionListener(new ActionListener() {
@@ -84,15 +97,16 @@ public class Pruebas extends JFrame {
             }
         });
 
-        // Hacer visible la ventana
+
         setVisible(true);
     }
 
     private void flashearPrograma(String programa) {
         String rutaFinal = RUTA + programList.getSelectedItem()+"\\";
-        String command = "esptool --chip esp32 -p COM4 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 "+rutaFinal+"bootloader.bin 0x10000 "+rutaFinal+"app-template.bin 0x8000 "+rutaFinal+"partition-table.bin";
+        String dispositivo = placasList.getSelectedItem().toString();
+        String command = "esptool --chip "+dispositivo+ " -p COM4 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 "+rutaFinal+"bootloader.bin 0x10000 "+rutaFinal+"app-template.bin 0x8000 "+rutaFinal+"partition-table.bin";
         outputArea.setText("Cargando...\n\n"); // Limpiar el área de salida
-        
+
         try {
             Thread.sleep(200);
             Process process = Runtime.getRuntime().exec(command);
